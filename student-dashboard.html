@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Productivity Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-hover: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Blob */
+        .bg-blob {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, rgba(236, 72, 153, 0.2) 50%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(60px);
+            pointer-events: none;
+            z-index: 0;
+            transition: all 0.3s ease-out;
+            animation: morphBlob 8s ease-in-out infinite;
+        }
+
+        @keyframes morphBlob {
+            0%, 100% {
+                border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            }
+            25% {
+                border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+            }
+            50% {
+                border-radius: 55% 45% 45% 55% / 45% 55% 45% 55%;
+            }
+            75% {
+                border-radius: 40% 60% 50% 50% / 60% 40% 60% 40%;
+            }
+        }
+
+        .bg-blob-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, rgba(245, 158, 11, 0.15) 50%, transparent 70%);
+            animation-delay: 2s;
+            animation-duration: 10s;
+        }
+
+        .bg-blob-3 {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.25) 0%, rgba(99, 102, 241, 0.15) 50%, transparent 70%);
+            animation-delay: 4s;
+            animation-duration: 12s;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-card);
+            padding: 25px 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1em;
+        }
+
+        /* Dashboard Grid */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon {
+            font-size: 1.2em;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            padding: 8px 12px;
+            font-size: 0.9em;
+        }
+
+        /* Todo List */
+        .todo-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .todo-list {
+            list-style: none;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .todo-item {
+            background: var(--bg-dark);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .todo-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .todo-item.completed {
+            opacity: 0.6;
+        }
+
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+        }
+
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--success);
+        }
+
+        .todo-text {
+            flex: 1;
+            color: var(--text-primary);
+        }
+
+        /* Calendar */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .calendar-nav button {
+            padding: 8px 16px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .calendar-nav button:hover {
+            background: var(--bg-hover);
+        }
+
+        .calendar-month {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            padding: 8px 5px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.8em;
+            background: var(--bg-dark);
+            border-radius: 8px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-dark);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            font-weight: 500;
+            min-height: 40px;
+            font-size: 0.9em;
+        }
+
+        .calendar-day:hover {
+            background: var(--bg-hover);
+            transform: scale(1.05);
+        }
+
+        .calendar-day.has-task {
+            border-color: var(--secondary);
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(99, 102, 241, 0.1));
+        }
+
+        .calendar-day.today {
+            background: var(--primary);
+            color: white;
+            font-weight: 700;
+        }
+
+        .calendar-day.other-month {
+            opacity: 0.3;
+        }
+
+        .task-dot {
+            position: absolute;
+            bottom: 3px;
+            width: 4px;
+            height: 4px;
+            background: var(--secondary);
+            border-radius: 50%;
+        }
+
+        /* Task Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid var(--border);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.5em;
+            color: var(--text-primary);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--danger);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .task-list {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .task-item {
+            background: var(--bg-dark);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .task-time {
+            color: var(--secondary);
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        /* Goals */
+        .goal-item {
+            background: var(--bg-dark);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .goal-title {
+            font-size: 1.1em;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            text-align: right;
+            margin-top: 5px;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            padding: 20px 25px;
+            border-radius: 15px;
+            border: 2px solid var(--warning);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            min-width: 300px;
+            animation: slideInRight 0.3s ease;
+            display: none;
+        }
+
+        .notification.show {
+            display: block;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .notification-title {
+            font-weight: 700;
+            color: var(--warning);
+            font-size: 1.1em;
+        }
+
+        .notification-body {
+            color: var(--text-primary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: var(--bg-dark);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Grade Item */
+        .grade-item {
+            background: var(--bg-dark);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border);
+        }
+
+        #gradesList {
+            max-height: 250px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .grade-info {
+            flex: 1;
+        }
+
+        .grade-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 3px;
+        }
+
+        .grade-score {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        .grade-percentage {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: var(--success);
+            margin-right: 10px;
+        }
+
+        /* Resource Item */
+        .resource-item {
+            background: var(--bg-dark);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        #resourcesList {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .resource-item:hover {
+            background: var(--bg-hover);
+            transform: translateX(5px);
+        }
+
+        .resource-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .resource-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9em;
+            word-break: break-all;
+        }
+
+        .resource-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Class Schedule Item */
+        .class-item {
+            background: var(--bg-dark);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary);
+            border: 1px solid var(--border);
+        }
+
+        #scheduleList {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .class-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .class-name {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: var(--text-primary);
+        }
+
+        .class-time {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .class-location {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .notification {
+                min-width: 250px;
+                right: 10px;
+                top: 10px;
+            }
+
+            .bg-blob {
+                width: 300px;
+                height: 300px;
+            }
+
+            .bg-blob-2 {
+                width: 250px;
+                height: 250px;
+            }
+
+            .bg-blob-3 {
+                width: 200px;
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background Blobs -->
+    <div class="bg-blob" id="blob1"></div>
+    <div class="bg-blob bg-blob-2" id="blob2"></div>
+    <div class="bg-blob bg-blob-3" id="blob3"></div>
+
+    <div class="container">
+        <header>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1>📚 Student Productivity Hub</h1>
+                    <p class="header-subtitle" id="welcomeMessage">Stay organized, achieve your goals, and ace your studies!</p>
+                </div>
+                <button class="btn btn-danger" onclick="logout()" style="padding: 10px 20px;">Logout</button>
+            </div>
+        </header>
+
+        <!-- Stats Overview -->
+        <div class="card" style="margin-bottom: 30px;">
+            <div class="card-header">
+                <h2 class="card-title"><span class="icon">📊</span> Today's Overview</h2>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="todoCount">0</div>
+                    <div class="stat-label">Tasks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="completedCount">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="upcomingCount">0</div>
+                    <div class="stat-label">Upcoming</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="goalsCount">0</div>
+                    <div class="stat-label">Goals</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <!-- Todo List -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><span class="icon">✅</span> To-Do List</h2>
+                </div>
+                <div class="todo-input-group">
+                    <input type="text" id="todoInput" class="input-field" placeholder="Add a new task...">
+                    <button class="btn btn-primary" onclick="addTodo()">Add</button>
+                </div>
+                <ul class="todo-list" id="todoList"></ul>
+            </div>
+
+            <!-- Calendar -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><span class="icon">📅</span> Calendar</h2>
+                </div>
+                <div class="calendar-header">
+                    <div class="calendar-nav">
+                        <button onclick="previousMonth()">◀</button>
+                        <button onclick="nextMonth()">▶</button>
+                    </div>
+                    <div class="calendar-month" id="currentMonth"></div>
+                </div>
+                <div class="calendar-grid" id="calendar"></div>
+            </div>
+
+            <!-- Goals -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><span class="icon">🎯</span> Goals</h2>
+                    <button class="btn btn-success" onclick="addGoal()">+ New Goal</button>
+                </div>
+                <div id="goalsList"></div>
+            </div>
+
+            <!-- Study Timer (Pomodoro) -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><span class="icon">⏱️</span> Study Timer</h2>
+                </div>
+                <div style="text-align: center;">
+                    <div id="timerDisplay" style="font-size: 3em; font-weight: 700; color: var(--primary); margin: 20px 0;">25:00</div>
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="startTimer()">Start</button>
+                        <button class="btn btn-danger" onclick="pauseTimer()">Pause</button>
+                        <button class="btn" style="background: var(--bg-dark); color: var(--text-primary);" onclick="resetTimer()">Reset</button>
+                    </div>
+                    <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+                        <button class="btn" style="background: var(--bg-dark); color: var(--text-primary); padding: 8px 16px; font-size: 0.9em;" onclick="setTimer(25)">25 min</button>
+                        <button class="btn" style="background: var(--bg-dark); color: var(--text-primary); padding: 8px 16px; font-size: 0.9em;" onclick="setTimer(15)">15 min</button>
+                        <button class="btn" style="background: var(--bg-dark); color: var(--text-primary); padding: 8px 16px; font-size: 0.9em;" onclick="setTimer(5)">5 min</button>
+                    </div>
+                    <div id="timerStatus" style="margin-top: 15px; color: var(--text-secondary); font-size: 0.9em;">Ready to focus!</div>
+                </div>
+            </div>
+
+            <!-- Quick Notes -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><span class="icon">📝</span> Quick Notes</h2>
+                    <button class="btn btn-success" onclick="saveNote()">Save</button>
+                </div>
+                <textarea id="notesArea" class="input-field" style="min-height: 200px; resize: vertical; font-family: 'Courier New', monospace;" placeholder="Take notes here..."></textarea>
+            </div>
+
+            <!-- Grade Calculator -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><span class="icon">📊</span> Grade Calculator</h2>
+                </div>
+                <div id="gradeInputs">
+                    <div class="form-group">
+                        <label>Assignment Name</label>
+                        <input type="text" id="assignmentName" class="input-field" placeholder="e.g., Midterm Exam">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="form-group">
+                            <label>Score</label>
+                            <input type="number" id="assignmentScore" class="input-field" placeholder="85">
+                        </div>
+                        <div class="form-group">
+                            <label>Total Points</label>
+                            <input type="number" id="assignmentTotal" class="input-field" placeholder="100">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="addGrade()" style="width: 100%; margin-bottom: 15px;">Add Grade</button>
+                </div>
+                <div id="gradesList"></div>
+                <div id="averageDisplay" style="margin-top: 20px; padding: 15px; background: var(--bg-dark); border-radius: 10px; text-align: center;">
+                    <div style="font-size: 0.9em; color: var(--text-secondary); margin-bottom: 5px;">Current Average</div>
+                    <div style="font-size: 2em; font-weight: 700; color: var(--success);">--</div>
+                </div>
+            </div>
+
+            <!-- Study Resources -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><span class="icon">📚</span> Study Resources</h2>
+                    <button class="btn btn-success" onclick="addResource()">+ Add</button>
+                </div>
+                <div id="resourcesList"></div>
+            </div>
+
+            <!-- Class Schedule -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><span class="icon">🕐</span> Class Schedule</h2>
+                    <button class="btn btn-success" onclick="addClass()">+ Add Class</button>
+                </div>
+                <div id="scheduleList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Modal -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Schedule Task</h3>
+                <button class="close-modal" onclick="closeModal()">×</button>
+            </div>
+            <div class="form-group">
+                <label>Task Name</label>
+                <input type="text" id="taskName" class="input-field" placeholder="Enter task name...">
+            </div>
+            <div class="form-group">
+                <label>Time</label>
+                <input type="time" id="taskTime" class="input-field">
+            </div>
+            <button class="btn btn-primary" onclick="saveTask()">Save Task</button>
+            <div class="task-list" id="dayTasks"></div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-header">
+            <div class="notification-title">⏰ Task Reminder!</div>
+            <button class="close-modal" onclick="closeNotification()">×</button>
+        </div>
+        <div class="notification-body" id="notificationBody"></div>
+    </div>
+
+    <script>
+        // Data Storage
+        let todos = JSON.parse(localStorage.getItem('todos')) || [];
+        let calendarTasks = JSON.parse(localStorage.getItem('calendarTasks')) || {};
+        let goals = JSON.parse(localStorage.getItem('goals')) || [];
+        let grades = JSON.parse(localStorage.getItem('grades')) || [];
+        let resources = JSON.parse(localStorage.getItem('resources')) || [];
+        let classes = JSON.parse(localStorage.getItem('classes')) || [];
+        let notes = localStorage.getItem('notes') || '';
+        let currentDate = new Date();
+        let selectedDate = null;
+        let notificationInterval = null;
+        
+        // Timer variables
+        let timerInterval = null;
+        let timeRemaining = 25 * 60; // 25 minutes in seconds
+        let timerRunning = false;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if user is logged in
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) {
+                // Not logged in, redirect to homepage
+                window.location.href = 'homepage.html';
+                return;
+            }
+            
+            // Update welcome message with user's name
+            const welcomeMessage = document.getElementById('welcomeMessage');
+            welcomeMessage.textContent = `Welcome back, ${currentUser.fullName}! Let's make today productive! 🚀`;
+            
+            renderTodos();
+            renderCalendar();
+            renderGoals();
+            renderGrades();
+            renderResources();
+            renderClasses();
+            loadNotes();
+            updateStats();
+            startNotificationSystem();
+            initScrollAnimation();
+            
+            document.getElementById('todoInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addTodo();
+            });
+        });
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('currentUser');
+                window.location.href = 'homepage.html';
+            }
+        }
+
+        // Todo Functions
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            const text = input.value.trim();
+            if (text) {
+                todos.push({
+                    id: Date.now(),
+                    text: text,
+                    completed: false,
+                    createdAt: new Date().toISOString()
+                });
+                saveTodos();
+                renderTodos();
+                input.value = '';
+                updateStats();
+            }
+        }
+
+        function toggleTodo(id) {
+            const todo = todos.find(t => t.id === id);
+            if (todo) {
+                todo.completed = !todo.completed;
+                saveTodos();
+                renderTodos();
+                updateStats();
+            }
+        }
+
+        function deleteTodo(id) {
+            todos = todos.filter(t => t.id !== id);
+            saveTodos();
+            renderTodos();
+            updateStats();
+        }
+
+        function renderTodos() {
+            const list = document.getElementById('todoList');
+            list.innerHTML = todos.map(todo => `
+                <li class="todo-item ${todo.completed ? 'completed' : ''}">
+                    <input type="checkbox" class="todo-checkbox" 
+                           ${todo.completed ? 'checked' : ''} 
+                           onchange="toggleTodo(${todo.id})">
+                    <span class="todo-text">${todo.text}</span>
+                    <button class="btn btn-danger" onclick="deleteTodo(${todo.id})">×</button>
+                </li>
+            `).join('');
+        }
+
+        function saveTodos() {
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+
+        // Calendar Functions
+        function renderCalendar() {
+            const calendar = document.getElementById('calendar');
+            const monthDisplay = document.getElementById('currentMonth');
+            
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            monthDisplay.textContent = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+            
+            let html = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+                .map(day => `<div class="calendar-day-header">${day}</div>`)
+                .join('');
+            
+            // Previous month days
+            for (let i = firstDay - 1; i >= 0; i--) {
+                html += `<div class="calendar-day other-month">${daysInPrevMonth - i}</div>`;
+            }
+            
+            // Current month days
+            const today = new Date();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateKey = `${year}-${month + 1}-${day}`;
+                const hasTasks = calendarTasks[dateKey] && calendarTasks[dateKey].length > 0;
+                const isToday = today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
+                
+                html += `
+                    <div class="calendar-day ${isToday ? 'today' : ''} ${hasTasks ? 'has-task' : ''}" 
+                         onclick="openTaskModal(${year}, ${month}, ${day})">
+                        ${day}
+                        ${hasTasks ? '<div class="task-dot"></div>' : ''}
+                    </div>
+                `;
+            }
+            
+            calendar.innerHTML = html;
+        }
+
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        function openTaskModal(year, month, day) {
+            selectedDate = `${year}-${month + 1}-${day}`;
+            document.getElementById('taskModal').classList.add('active');
+            renderDayTasks();
+        }
+
+        function closeModal() {
+            document.getElementById('taskModal').classList.remove('active');
+            document.getElementById('taskName').value = '';
+            document.getElementById('taskTime').value = '';
+        }
+
+        function saveTask() {
+            const taskName = document.getElementById('taskName').value.trim();
+            const taskTime = document.getElementById('taskTime').value;
+            
+            if (taskName && taskTime) {
+                if (!calendarTasks[selectedDate]) {
+                    calendarTasks[selectedDate] = [];
+                }
+                
+                calendarTasks[selectedDate].push({
+                    id: Date.now(),
+                    name: taskName,
+                    time: taskTime,
+                    completed: false
+                });
+                
+                saveCalendarTasks();
+                renderCalendar();
+                renderDayTasks();
+                document.getElementById('taskName').value = '';
+                document.getElementById('taskTime').value = '';
+                updateStats();
+            }
+        }
+
+        function renderDayTasks() {
+            const container = document.getElementById('dayTasks');
+            const tasks = calendarTasks[selectedDate] || [];
+            
+            if (tasks.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin-top: 20px;">No tasks scheduled for this day</p>';
+                return;
+            }
+            
+            container.innerHTML = tasks.map(task => `
+                <div class="task-item">
+                    <div class="task-time">${task.time}</div>
+                    <div>${task.name}</div>
+                    <button class="btn btn-danger" style="margin-top: 8px;" onclick="deleteTask('${selectedDate}', ${task.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteTask(dateKey, taskId) {
+            calendarTasks[dateKey] = calendarTasks[dateKey].filter(t => t.id !== taskId);
+            if (calendarTasks[dateKey].length === 0) {
+                delete calendarTasks[dateKey];
+            }
+            saveCalendarTasks();
+            renderCalendar();
+            renderDayTasks();
+            updateStats();
+        }
+
+        function saveCalendarTasks() {
+            localStorage.setItem('calendarTasks', JSON.stringify(calendarTasks));
+        }
+
+        // Goals Functions
+        function addGoal() {
+            const goalName = prompt('Enter goal name:');
+            if (goalName) {
+                const target = parseInt(prompt('Enter target (e.g., number of study hours, assignments):'));
+                if (target && target > 0) {
+                    goals.push({
+                        id: Date.now(),
+                        name: goalName,
+                        current: 0,
+                        target: target
+                    });
+                    saveGoals();
+                    renderGoals();
+                    updateStats();
+                }
+            }
+        }
+
+        function updateGoalProgress(id, increment = true) {
+            const goal = goals.find(g => g.id === id);
+            if (goal) {
+                if (increment) {
+                    goal.current = Math.min(goal.current + 1, goal.target);
+                } else {
+                    goal.current = Math.max(goal.current - 1, 0);
+                }
+                saveGoals();
+                renderGoals();
+            }
+        }
+
+        function deleteGoal(id) {
+            goals = goals.filter(g => g.id !== id);
+            saveGoals();
+            renderGoals();
+            updateStats();
+        }
+
+        function renderGoals() {
+            const container = document.getElementById('goalsList');
+            if (goals.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center;">No goals set. Create your first goal!</p>';
+                return;
+            }
+            
+            container.innerHTML = goals.map(goal => {
+                const percentage = (goal.current / goal.target * 100).toFixed(0);
+                return `
+                    <div class="goal-item">
+                        <div class="goal-header">
+                            <div class="goal-title">${goal.name}</div>
+                            <button class="btn btn-danger" onclick="deleteGoal(${goal.id})">×</button>
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button class="btn btn-primary" style="padding: 8px 12px;" onclick="updateGoalProgress(${goal.id}, false)">-</button>
+                            <button class="btn btn-success" style="padding: 8px 12px;" onclick="updateGoalProgress(${goal.id}, true)">+</button>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        <div class="progress-text">${goal.current} / ${goal.target} (${percentage}%)</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function saveGoals() {
+            localStorage.setItem('goals', JSON.stringify(goals));
+        }
+
+        // Notification System
+        function startNotificationSystem() {
+            // Check every 30 seconds for tasks
+            notificationInterval = setInterval(checkForTasks, 30000);
+            checkForTasks(); // Check immediately
+        }
+
+        function checkForTasks() {
+            const now = new Date();
+            const today = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+            const currentTime = now.getHours() * 60 + now.getMinutes();
+            
+            // Check calendar tasks
+            const todayTasks = calendarTasks[today] || [];
+            todayTasks.forEach(task => {
+                const [hours, minutes] = task.time.split(':').map(Number);
+                const taskTime = hours * 60 + minutes;
+                const timeDiff = taskTime - currentTime;
+                
+                // Notify if task is within 15 minutes
+                if (timeDiff > 0 && timeDiff <= 15 && !task.notified) {
+                    showNotification(`Upcoming: ${task.name} at ${task.time}`);
+                    task.notified = true;
+                }
+            });
+            
+            // Check incomplete todos (remind every 2 hours)
+            const incompleteTodos = todos.filter(t => !t.completed);
+            if (incompleteTodos.length > 0 && now.getMinutes() === 0 && now.getHours() % 2 === 0) {
+                showNotification(`You have ${incompleteTodos.length} incomplete tasks!`);
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            document.getElementById('notificationBody').textContent = message;
+            notification.classList.add('show');
+            
+            // Auto hide after 10 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 10000);
+        }
+
+        function closeNotification() {
+            document.getElementById('notification').classList.remove('show');
+        }
+
+        // Stats Update
+        function updateStats() {
+            document.getElementById('todoCount').textContent = todos.length;
+            document.getElementById('completedCount').textContent = todos.filter(t => t.completed).length;
+            
+            const today = new Date();
+            const todayKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+            document.getElementById('upcomingCount').textContent = (calendarTasks[todayKey] || []).length;
+            document.getElementById('goalsCount').textContent = goals.length;
+        }
+
+        // Study Timer Functions
+        function startTimer() {
+            if (!timerRunning) {
+                timerRunning = true;
+                document.getElementById('timerStatus').textContent = '🔥 Stay focused!';
+                timerInterval = setInterval(() => {
+                    if (timeRemaining > 0) {
+                        timeRemaining--;
+                        updateTimerDisplay();
+                    } else {
+                        completeTimer();
+                    }
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            timerRunning = false;
+            clearInterval(timerInterval);
+            document.getElementById('timerStatus').textContent = '⏸️ Paused';
+        }
+
+        function resetTimer() {
+            timerRunning = false;
+            clearInterval(timerInterval);
+            timeRemaining = 25 * 60;
+            updateTimerDisplay();
+            document.getElementById('timerStatus').textContent = 'Ready to focus!';
+        }
+
+        function setTimer(minutes) {
+            pauseTimer();
+            timeRemaining = minutes * 60;
+            updateTimerDisplay();
+            document.getElementById('timerStatus').textContent = `Set to ${minutes} minutes`;
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function completeTimer() {
+            pauseTimer();
+            document.getElementById('timerStatus').textContent = '✅ Great work! Time for a break!';
+            showNotification('Study session complete! Take a break!');
+            timeRemaining = 25 * 60;
+            updateTimerDisplay();
+        }
+
+        // Notes Functions
+        function saveNote() {
+            const notesArea = document.getElementById('notesArea');
+            notes = notesArea.value;
+            localStorage.setItem('notes', notes);
+            showNotification('Notes saved successfully!');
+        }
+
+        function loadNotes() {
+            document.getElementById('notesArea').value = notes;
+        }
+
+        // Grade Calculator Functions
+        function addGrade() {
+            const name = document.getElementById('assignmentName').value.trim();
+            const score = parseFloat(document.getElementById('assignmentScore').value);
+            const total = parseFloat(document.getElementById('assignmentTotal').value);
+            
+            if (name && score >= 0 && total > 0) {
+                grades.push({
+                    id: Date.now(),
+                    name: name,
+                    score: score,
+                    total: total,
+                    percentage: ((score / total) * 100).toFixed(1)
+                });
+                saveGrades();
+                renderGrades();
+                
+                document.getElementById('assignmentName').value = '';
+                document.getElementById('assignmentScore').value = '';
+                document.getElementById('assignmentTotal').value = '';
+            }
+        }
+
+        function deleteGrade(id) {
+            grades = grades.filter(g => g.id !== id);
+            saveGrades();
+            renderGrades();
+        }
+
+        function renderGrades() {
+            const container = document.getElementById('gradesList');
+            if (grades.length === 0) {
+                container.innerHTML = '';
+                document.getElementById('averageDisplay').querySelector('div:last-child').textContent = '--';
+                return;
+            }
+            
+            container.innerHTML = grades.map(grade => `
+                <div class="grade-item">
+                    <div class="grade-info">
+                        <div class="grade-name">${grade.name}</div>
+                        <div class="grade-score">${grade.score} / ${grade.total}</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="grade-percentage">${grade.percentage}%</div>
+                        <button class="btn btn-danger" onclick="deleteGrade(${grade.id})">×</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Calculate average
+            const average = grades.reduce((sum, g) => sum + parseFloat(g.percentage), 0) / grades.length;
+            const avgDisplay = document.getElementById('averageDisplay').querySelector('div:last-child');
+            avgDisplay.textContent = average.toFixed(1) + '%';
+            
+            // Color code the average
+            if (average >= 90) {
+                avgDisplay.style.color = 'var(--success)';
+            } else if (average >= 80) {
+                avgDisplay.style.color = 'var(--primary)';
+            } else if (average >= 70) {
+                avgDisplay.style.color = 'var(--warning)';
+            } else {
+                avgDisplay.style.color = 'var(--danger)';
+            }
+        }
+
+        function saveGrades() {
+            localStorage.setItem('grades', JSON.stringify(grades));
+        }
+
+        // Resources Functions
+        function addResource() {
+            const title = prompt('Resource title:');
+            if (title) {
+                const url = prompt('Resource URL (optional):');
+                resources.push({
+                    id: Date.now(),
+                    title: title,
+                    url: url || ''
+                });
+                saveResources();
+                renderResources();
+            }
+        }
+
+        function deleteResource(id) {
+            resources = resources.filter(r => r.id !== id);
+            saveResources();
+            renderResources();
+        }
+
+        function renderResources() {
+            const container = document.getElementById('resourcesList');
+            if (resources.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center;">No resources added yet</p>';
+                return;
+            }
+            
+            container.innerHTML = resources.map(resource => `
+                <div class="resource-item">
+                    <div class="resource-title">
+                        📎 ${resource.title}
+                        <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.8em; margin-left: auto;" onclick="deleteResource(${resource.id})">×</button>
+                    </div>
+                    ${resource.url ? `<a href="${resource.url}" target="_blank" class="resource-link">${resource.url}</a>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function saveResources() {
+            localStorage.setItem('resources', JSON.stringify(resources));
+        }
+
+        // Class Schedule Functions
+        function addClass() {
+            const name = prompt('Class name:');
+            if (name) {
+                const day = prompt('Day (e.g., Monday, Tuesday):');
+                const time = prompt('Time (e.g., 9:00 AM - 10:30 AM):');
+                const location = prompt('Location (e.g., Room 301):');
+                
+                if (day && time) {
+                    classes.push({
+                        id: Date.now(),
+                        name: name,
+                        day: day,
+                        time: time,
+                        location: location || ''
+                    });
+                    saveClasses();
+                    renderClasses();
+                }
+            }
+        }
+
+        function deleteClass(id) {
+            classes = classes.filter(c => c.id !== id);
+            saveClasses();
+            renderClasses();
+        }
+
+        function renderClasses() {
+            const container = document.getElementById('scheduleList');
+            if (classes.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center;">No classes scheduled</p>';
+                return;
+            }
+            
+            // Sort by day
+            const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            const sortedClasses = [...classes].sort((a, b) => 
+                dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day)
+            );
+            
+            container.innerHTML = sortedClasses.map(cls => `
+                <div class="class-item">
+                    <div class="class-header">
+                        <div class="class-name">${cls.name}</div>
+                        <button class="btn btn-danger" style="padding: 6px 10px; font-size: 0.85em;" onclick="deleteClass(${cls.id})">×</button>
+                    </div>
+                    <div class="class-time">📅 ${cls.day} • ${cls.time}</div>
+                    ${cls.location ? `<div class="class-location">📍 ${cls.location}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function saveClasses() {
+            localStorage.setItem('classes', JSON.stringify(classes));
+        }
+
+        // Scroll Animation for Background Blobs
+        function initScrollAnimation() {
+            const blob1 = document.getElementById('blob1');
+            const blob2 = document.getElementById('blob2');
+            const blob3 = document.getElementById('blob3');
+            
+            window.addEventListener('scroll', () => {
+                const scrollY = window.scrollY;
+                const windowHeight = window.innerHeight;
+                
+                // Blob 1 - moves down and right
+                blob1.style.transform = `translate(${scrollY * 0.3}px, ${scrollY * 0.2}px) rotate(${scrollY * 0.1}deg)`;
+                blob1.style.top = `${10 + scrollY * 0.1}%`;
+                blob1.style.left = `${5 + scrollY * 0.05}%`;
+                
+                // Blob 2 - moves up and left
+                blob2.style.transform = `translate(${-scrollY * 0.2}px, ${scrollY * 0.3}px) rotate(${-scrollY * 0.15}deg)`;
+                blob2.style.top = `${40 + scrollY * 0.08}%`;
+                blob2.style.right = `${10 + scrollY * 0.06}%`;
+                
+                // Blob 3 - moves in circle pattern
+                const angle = scrollY * 0.002;
+                const radius = 100;
+                blob3.style.transform = `translate(${Math.cos(angle) * radius}px, ${Math.sin(angle) * radius}px) rotate(${scrollY * 0.2}deg)`;
+                blob3.style.bottom = `${20 + scrollY * 0.05}%`;
+                blob3.style.left = `${50}%`;
+            });
+            
+            // Initial positioning
+            blob1.style.top = '10%';
+            blob1.style.left = '5%';
+            blob2.style.top = '40%';
+            blob2.style.right = '10%';
+            blob3.style.bottom = '20%';
+            blob3.style.left = '50%';
+        }
+    </script>
+</body>
+</html>
