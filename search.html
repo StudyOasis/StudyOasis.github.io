@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search - Student Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: var(--bg-card);
+            padding: 25px 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-outline {
+            padding: 10px 20px;
+            border: 2px solid var(--primary);
+            background: transparent;
+            color: var(--text-primary);
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+        }
+
+        .search-container {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 18px 25px;
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 20px;
+            background: var(--bg-dark);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary);
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .results-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-count {
+            font-size: 0.8em;
+            color: var(--text-secondary);
+        }
+
+        .results-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .result-card {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            gap: 15px;
+            align-items: start;
+        }
+
+        .result-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+        }
+
+        .result-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+
+        .result-content {
+            flex: 1;
+        }
+
+        .result-title {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .result-description {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+            margin-bottom: 8px;
+        }
+
+        .result-meta {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+
+        .highlight {
+            background: rgba(99, 102, 241, 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .recent-searches {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .recent-item {
+            padding: 6px 15px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .recent-item:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>🔍 Search</h1>
+                <p style="color: var(--text-secondary); margin-top: 5px;">Find anything in Student Hub</p>
+            </div>
+            <a href="student-dashboard.html" class="btn-outline">← Dashboard</a>
+        </header>
+
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search users, groups, posts, flashcards..." autofocus>
+            </div>
+
+            <div class="filters">
+                <button class="filter-btn active" onclick="setFilter('all')">All</button>
+                <button class="filter-btn" onclick="setFilter('users')">👤 Users</button>
+                <button class="filter-btn" onclick="setFilter('groups')">📚 Groups</button>
+                <button class="filter-btn" onclick="setFilter('posts')">📱 Posts</button>
+                <button class="filter-btn" onclick="setFilter('flashcards')">🎴 Flashcards</button>
+                <button class="filter-btn" onclick="setFilter('assignments')">📋 Assignments</button>
+            </div>
+
+            <div class="recent-searches" id="recentSearches"></div>
+        </div>
+
+        <div id="loadingState" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Searching...</p>
+        </div>
+
+        <div id="resultsContainer"></div>
+
+        <div id="emptyState" class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <h2>Start Searching</h2>
+            <p>Type something to search across Student Hub</p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="firebase-config-rtdb.js"></script>
+
+    <script>
+        let currentUserId = null;
+        let currentFilter = 'all';
+        let searchTimeout = null;
+        let recentSearches = JSON.parse(localStorage.getItem('recentSearches')) || [];
+
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login-rtdb.html';
+                return;
+            }
+            currentUserId = user.uid;
+            displayRecentSearches();
+        });
+
+        // Real-time search with debounce
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.trim();
+
+            if (!query) {
+                document.getElementById('resultsContainer').innerHTML = '';
+                document.getElementById('emptyState').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('emptyState').style.display = 'none';
+
+            searchTimeout = setTimeout(() => performSearch(query), 500);
+        });
+
+        async function performSearch(query) {
+            try {
+                const results = {
+                    users: [],
+                    groups: [],
+                    posts: [],
+                    flashcards: [],
+                    assignments: []
+                };
+
+                // Search users
+                if (currentFilter === 'all' || currentFilter === 'users') {
+                    const usersSnapshot = await database.ref('users').once('value');
+                    const users = usersSnapshot.val() || {};
+                    
+                    Object.entries(users).forEach(([uid, userData]) => {
+                        if (uid === currentUserId) return;
+                        const profile = userData.profile;
+                        if (profile && (
+                            profile.fullName?.toLowerCase().includes(query.toLowerCase()) ||
+                            profile.email?.toLowerCase().includes(query.toLowerCase())
+                        )) {
+                            results.users.push({
+                                id: uid,
+                                type: 'user',
+                                title: profile.fullName,
+                                description: profile.email,
+                                meta: `Level ${profile.level || 1} • ${profile.points || 0} points`
+                            });
+                        }
+                    });
+                }
+
+                // Search groups
+                if (currentFilter === 'all' || currentFilter === 'groups') {
+                    const groupsSnapshot = await database.ref('groups').once('value');
+                    const groups = groupsSnapshot.val() || {};
+                    
+                    Object.entries(groups).forEach(([gid, group]) => {
+                        if (group.info && (
+                            group.info.name?.toLowerCase().includes(query.toLowerCase()) ||
+                            group.info.subject?.toLowerCase().includes(query.toLowerCase())
+                        )) {
+                            const memberCount = group.members ? Object.keys(group.members).length : 0;
+                            results.groups.push({
+                                id: gid,
+                                type: 'group',
+                                title: group.info.name,
+                                description: group.info.description,
+                                meta: `${memberCount} members • ${group.info.subject}`
+                            });
+                        }
+                    });
+                }
+
+                // Search posts
+                if (currentFilter === 'all' || currentFilter === 'posts') {
+                    const postsSnapshot = await database.ref('feed/posts').once('value');
+                    const posts = postsSnapshot.val() || {};
+                    
+                    Object.entries(posts).forEach(([pid, post]) => {
+                        if (post.text?.toLowerCase().includes(query.toLowerCase())) {
+                            results.posts.push({
+                                id: pid,
+                                type: 'post',
+                                title: post.userName,
+                                description: post.text.substring(0, 100) + '...',
+                                meta: getTimeAgo(post.timestamp)
+                            });
+                        }
+                    });
+                }
+
+                // Search user's flashcards
+                if (currentFilter === 'all' || currentFilter === 'flashcards') {
+                    const flashcardsSnapshot = await database.ref(`users/${currentUserId}/data/flashcardDecks`).once('value');
+                    const decks = flashcardsSnapshot.val() || [];
+                    
+                    decks.forEach((deck, index) => {
+                        if (deck && deck.name?.toLowerCase().includes(query.toLowerCase())) {
+                            results.flashcards.push({
+                                id: index,
+                                type: 'flashcard',
+                                title: deck.name,
+                                description: deck.category,
+                                meta: `${deck.cards?.length || 0} cards`
+                            });
+                        }
+                    });
+                }
+
+                // Search user's assignments
+                if (currentFilter === 'all' || currentFilter === 'assignments') {
+                    const assignmentsSnapshot = await database.ref(`users/${currentUserId}/data/assignments`).once('value');
+                    const assignments = assignmentsSnapshot.val() || [];
+                    
+                    assignments.forEach((assignment, index) => {
+                        if (assignment && (
+                            assignment.title?.toLowerCase().includes(query.toLowerCase()) ||
+                            assignment.subject?.toLowerCase().includes(query.toLowerCase())
+                        )) {
+                            results.assignments.push({
+                                id: index,
+                                type: 'assignment',
+                                title: assignment.title,
+                                description: assignment.subject,
+                                meta: `Due: ${new Date(assignment.dueDate).toLocaleDateString()}`
+                            });
+                        }
+                    });
+                }
+
+                displayResults(results, query);
+                saveRecentSearch(query);
+                
+                document.getElementById('loadingState').style.display = 'none';
+
+            } catch (error) {
+                console.error('Search error:', error);
+                document.getElementById('loadingState').style.display = 'none';
+            }
+        }
+
+        function displayResults(results, query) {
+            const container = document.getElementById('resultsContainer');
+            let html = '';
+
+            const icons = {
+                user: '👤',
+                group: '📚',
+                post: '📱',
+                flashcard: '🎴',
+                assignment: '📋'
+            };
+
+            const sections = [
+                { key: 'users', title: 'Users' },
+                { key: 'groups', title: 'Groups' },
+                { key: 'posts', title: 'Posts' },
+                { key: 'flashcards', title: 'Flashcards' },
+                { key: 'assignments', title: 'Assignments' }
+            ];
+
+            let totalResults = 0;
+
+            sections.forEach(section => {
+                if (results[section.key].length > 0) {
+                    totalResults += results[section.key].length;
+                    html += `
+                        <div class="results-section">
+                            <h3 class="section-title">
+                                ${section.title}
+                                <span class="result-count">(${results[section.key].length})</span>
+                            </h3>
+                            <div class="results-grid">
+                                ${results[section.key].map(result => {
+                                    const highlightedTitle = highlightText(result.title, query);
+                                    const highlightedDesc = result.description ? highlightText(result.description, query) : '';
+                                    
+                                    return `
+                                        <div class="result-card" onclick="openResult('${result.type}', '${result.id}')">
+                                            <div class="result-icon">${icons[result.type]}</div>
+                                            <div class="result-content">
+                                                <div class="result-title">${highlightedTitle}</div>
+                                                ${highlightedDesc ? `<div class="result-description">${highlightedDesc}</div>` : ''}
+                                                <div class="result-meta">${result.meta}</div>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            if (totalResults === 0) {
+                html = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <h2>No results found</h2>
+                        <p>Try different keywords</p>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function highlightText(text, query) {
+            if (!text) return '';
+            const regex = new RegExp(`(${query})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        function openResult(type, id) {
+            switch(type) {
+                case 'user':
+                    window.location.href = `user-profile.html?userId=${id}`;
+                    break;
+                case 'group':
+                    window.location.href = `study-groups.html?groupId=${id}`;
+                    break;
+                case 'post':
+                    window.location.href = `study-feed.html`;
+                    break;
+                case 'flashcard':
+                    window.location.href = `flashcards.html`;
+                    break;
+                case 'assignment':
+                    window.location.href = `assignments.html`;
+                    break;
+            }
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            const query = document.getElementById('searchInput').value.trim();
+            if (query) {
+                performSearch(query);
+            }
+        }
+
+        function saveRecentSearch(query) {
+            if (!recentSearches.includes(query)) {
+                recentSearches.unshift(query);
+                recentSearches = recentSearches.slice(0, 5); // Keep last 5
+                localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+                displayRecentSearches();
+            }
+        }
+
+        function displayRecentSearches() {
+            const container = document.getElementById('recentSearches');
+            
+            if (recentSearches.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            const html = `
+                <span style="color: var(--text-secondary); font-size: 0.9em; margin-right: 10px;">Recent:</span>
+                ${recentSearches.map(search => `
+                    <div class="recent-item" onclick="searchRecent('${search}')">${search}</div>
+                `).join('')}
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function searchRecent(query) {
+            document.getElementById('searchInput').value = query;
+            performSearch(query);
+        }
+
+        function getTimeAgo(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            const seconds = Math.floor(diff / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+
+            if (days > 0) return `${days}d ago`;
+            if (hours > 0) return `${hours}h ago`;
+            if (minutes > 0) return `${minutes}m ago`;
+            return 'Just now';
+        }
+
+        // Keyboard shortcut: Ctrl/Cmd + K to focus search
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+        });
+    </script>
+</body>
+</html>

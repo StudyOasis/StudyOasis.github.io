@@ -747,17 +747,28 @@
         <header>
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
                 <div>
-                    <h1>📚 Student Productivity Hub</h1>
-                    <p class="header-subtitle" id="welcomeMessage">Stay organized, achieve your goals, and ace your studies!</p>
+                    <h1>📚 Student Hub</h1>
+                    <p class="header-subtitle" id="welcomeMessage">Your complete student productivity & social platform!</p>
                 </div>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <a href="flashcards.html" class="btn btn-primary" style="padding: 10px 20px; text-decoration: none;">🎴 Flashcards</a>
-                    <a href="assignments.html" class="btn btn-primary" style="padding: 10px 20px; text-decoration: none;">📋 Assignments</a>
-                    <a href="exams.html" class="btn btn-primary" style="padding: 10px 20px; text-decoration: none;">⏰ Exams</a>
-                    <a href="habits.html" class="btn btn-primary" style="padding: 10px 20px; text-decoration: none;">✅ Habits</a>
-                    <a href="statistics.html" class="btn btn-primary" style="padding: 10px 20px; text-decoration: none;">📊 Stats</a>
-                    <a href="profile.html" class="btn btn-outline" style="padding: 10px 20px; text-decoration: none;">⚙️ Settings</a>
-                    <button class="btn btn-danger" onclick="logout()" style="padding: 10px 20px;">Logout</button>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                    <!-- Study Tools -->
+                    <a href="flashcards.html" class="btn btn-primary" style="padding: 8px 14px; text-decoration: none; font-size: 0.85em;">🎴 Cards</a>
+                    <a href="assignments.html" class="btn btn-primary" style="padding: 8px 14px; text-decoration: none; font-size: 0.85em;">📋 Tasks</a>
+                    <a href="exams.html" class="btn btn-primary" style="padding: 8px 14px; text-decoration: none; font-size: 0.85em;">⏰ Exams</a>
+                    <a href="habits.html" class="btn btn-primary" style="padding: 8px 14px; text-decoration: none; font-size: 0.85em;">✅ Habits</a>
+                    <a href="calendar.html" class="btn btn-primary" style="padding: 8px 14px; text-decoration: none; font-size: 0.85em;">📅 Calendar</a>
+                    <!-- Social Features -->
+                    <a href="study-feed.html" class="btn btn-primary" style="padding: 8px 14px; text-decoration: none; font-size: 0.85em; background: linear-gradient(135deg, #ec4899, #f59e0b);">📱 Feed</a>
+                    <a href="messages.html" class="btn btn-primary" style="padding: 8px 14px; text-decoration: none; font-size: 0.85em; background: linear-gradient(135deg, #10b981, #06b6d4);">💬 Chat</a>
+                    <a href="study-groups.html" class="btn btn-primary" style="padding: 8px 14px; text-decoration: none; font-size: 0.85em; background: linear-gradient(135deg, #a855f7, #8b5cf6);">📚 Groups</a>
+                    <a href="find-friends.html" class="btn btn-primary" style="padding: 8px 14px; text-decoration: none; font-size: 0.85em; background: linear-gradient(135deg, #f59e0b, #ec4899);">👥 Friends</a>
+                    <!-- Platform Features -->
+                    <a href="search.html" class="btn btn-outline" style="padding: 8px 14px; text-decoration: none; font-size: 0.85em;">🔍</a>
+                    <a href="notifications.html" class="btn btn-outline" style="padding: 8px 14px; text-decoration: none; font-size: 0.85em;">🔔</a>
+                    <a href="leaderboard.html" class="btn btn-outline" style="padding: 8px 14px; text-decoration: none; font-size: 0.85em;">🏆</a>
+                    <a href="user-profile.html" class="btn btn-outline" style="padding: 8px 14px; text-decoration: none; font-size: 0.85em;">👤</a>
+                    <a href="statistics.html" class="btn btn-outline" style="padding: 8px 14px; text-decoration: none; font-size: 0.85em;">📊</a>
+                    <button class="btn btn-danger" onclick="logout()" style="padding: 8px 14px; font-size: 0.85em;">Logout</button>
                 </div>
             </div>
         </header>
@@ -952,17 +963,8 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            // Check if user is logged in
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (!currentUser) {
-                // Not logged in, redirect to homepage
-                window.location.href = 'homepage.html';
-                return;
-            }
-            
-            // Update welcome message with user's name
-            const welcomeMessage = document.getElementById('welcomeMessage');
-            welcomeMessage.textContent = `Welcome back, ${currentUser.fullName}! Let's make today productive! 🚀`;
+            // Firebase auth check is handled above - this is just for loading UI
+            // Authentication is checked by Firebase in the script at the bottom
             
             renderTodos();
             renderCalendar();
@@ -981,12 +983,6 @@
         });
 
         // Logout function
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('currentUser');
-                window.location.href = 'homepage.html';
-            }
-        }
 
         // Todo Functions
         function addTodo() {
@@ -1564,5 +1560,46 @@
             blob3.style.left = '50%';
         }
     </script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="firebase-config-rtdb.js"></script>
+    <script>
+        // Check Firebase authentication
+        let currentUserId = null;
+        let currentUserProfile = null;
+
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                // Not logged in, redirect to homepage
+                window.location.href = 'homepage.html';
+                return;
+            }
+            
+            currentUserId = user.uid;
+            
+            // Load user profile from Firebase
+            const profileSnapshot = await database.ref(`users/${currentUserId}/profile`).once('value');
+            currentUserProfile = profileSnapshot.val();
+            
+            // Update welcome message
+            const welcomeMessage = document.getElementById('welcomeMessage');
+            if (currentUserProfile) {
+                welcomeMessage.textContent = `Welcome back, ${currentUserProfile.fullName}! Let's make today productive! 🚀`;
+            }
+        });
+
+        // Update logout function to use Firebase
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                signOutUser();
+            }
+        }
+    </script>
+
+    <!-- Theme Switcher -->
+    <script src="theme-switcher.js"></script>
 </body>
 </html>
