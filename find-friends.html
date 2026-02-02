@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Friends - Student Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: var(--bg-card);
+            padding: 25px 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+
+        .search-section {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-size: 1em;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: var(--bg-dark);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .user-card {
+            background: var(--bg-dark);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .user-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+        }
+
+        .user-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            flex-shrink: 0;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .user-stats {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        .user-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .request-card {
+            background: var(--bg-dark);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .request-info {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .request-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 6px;
+            font-size: 0.85em;
+            color: var(--primary);
+            margin-left: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>🔍 Find Friends</h1>
+                <p style="color: var(--text-secondary); margin-top: 5px;">Connect with students</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <a href="user-profile.html" class="btn btn-primary">👤 My Profile</a>
+                <a href="student-dashboard.html" class="btn btn-outline">← Dashboard</a>
+            </div>
+        </header>
+
+        <div class="search-section">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('discover')">🌟 Discover</div>
+                <div class="tab" onclick="switchTab('requests')">📬 Requests <span class="badge" id="requestBadge" style="display: none;">0</span></div>
+                <div class="tab" onclick="switchTab('myfriends')">👥 My Friends</div>
+            </div>
+
+            <div class="search-box" id="searchBox">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search by name or email..." onkeyup="searchUsers()">
+                <button class="btn btn-primary" onclick="searchUsers()">Search</button>
+            </div>
+        </div>
+
+        <!-- Discover Tab -->
+        <div id="discoverTab">
+            <div class="users-grid" id="usersGrid"></div>
+            <div id="discoverEmpty" class="empty-state" style="display: none;">
+                <div class="empty-icon">🔍</div>
+                <h3>No users found</h3>
+                <p>Try a different search term</p>
+            </div>
+        </div>
+
+        <!-- Friend Requests Tab -->
+        <div id="requestsTab" style="display: none;">
+            <h2 style="margin-bottom: 20px;">Incoming Friend Requests</h2>
+            <div id="requestsList"></div>
+            <div id="requestsEmpty" class="empty-state">
+                <div class="empty-icon">📭</div>
+                <h3>No pending requests</h3>
+                <p>You're all caught up!</p>
+            </div>
+        </div>
+
+        <!-- My Friends Tab -->
+        <div id="friendsTab" style="display: none;">
+            <h2 style="margin-bottom: 20px;">Your Friends</h2>
+            <div class="users-grid" id="friendsGrid"></div>
+            <div id="friendsEmpty" class="empty-state">
+                <div class="empty-icon">👥</div>
+                <h3>No friends yet</h3>
+                <p>Start by finding some students to connect with!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="firebase-config-rtdb.js"></script>
+
+    <script>
+        let currentUserId = null;
+        let allUsers = [];
+        let currentTab = 'discover';
+
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login-rtdb.html';
+                return;
+            }
+            currentUserId = user.uid;
+            await loadAllUsers();
+            await checkFriendRequests();
+            switchTab('discover');
+        });
+
+        async function loadAllUsers() {
+            const snapshot = await database.ref('users').once('value');
+            const users = snapshot.val();
+            
+            allUsers = Object.keys(users || {})
+                .filter(uid => uid !== currentUserId)
+                .map(uid => ({ id: uid, ...users[uid].profile }));
+            
+            displayUsers(allUsers);
+        }
+
+        async function searchUsers() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            if (!query) {
+                displayUsers(allUsers);
+                return;
+            }
+
+            const filtered = allUsers.filter(user => 
+                user.fullName.toLowerCase().includes(query) ||
+                user.email.toLowerCase().includes(query)
+            );
+
+            displayUsers(filtered);
+        }
+
+        async function displayUsers(users) {
+            const grid = document.getElementById('usersGrid');
+            const empty = document.getElementById('discoverEmpty');
+
+            if (users.length === 0) {
+                grid.style.display = 'none';
+                empty.style.display = 'block';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            empty.style.display = 'none';
+
+            // Check friend status for each user
+            const html = await Promise.all(users.map(async user => {
+                const friendStatus = await checkFriendStatus(user.id);
+                const initials = user.fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+                
+                let actionButton = '';
+                if (friendStatus === 'friends') {
+                    actionButton = `
+                        <button class="btn btn-success" onclick="viewProfile('${user.id}')">View Profile</button>
+                        <button class="btn btn-outline" style="font-size: 0.85em; padding: 6px 12px;" onclick="removeFriend('${user.id}')">Remove</button>
+                    `;
+                } else if (friendStatus === 'pending') {
+                    actionButton = '<button class="btn btn-outline" disabled>Request Sent</button>';
+                } else {
+                    actionButton = `<button class="btn btn-primary" onclick="sendRequest('${user.id}')">Add Friend</button>`;
+                }
+
+                return `
+                    <div class="user-card">
+                        <div class="user-avatar">${user.photoURL || initials}</div>
+                        <div class="user-info">
+                            <div class="user-name">${user.fullName}</div>
+                            <div class="user-stats">Level ${user.level || 1} • ${user.points || 0} points</div>
+                        </div>
+                        <div class="user-actions">
+                            ${actionButton}
+                        </div>
+                    </div>
+                `;
+            }));
+
+            grid.innerHTML = html.join('');
+        }
+
+        async function checkFriendStatus(userId) {
+            const friendSnapshot = await database.ref(`users/${currentUserId}/friends/${userId}`).once('value');
+            if (friendSnapshot.exists()) return 'friends';
+
+            const requestSnapshot = await database.ref(`users/${userId}/friendRequests/${currentUserId}`).once('value');
+            if (requestSnapshot.exists()) return 'pending';
+
+            return 'none';
+        }
+
+        async function sendRequest(userId) {
+            try {
+                await database.ref(`users/${userId}/friendRequests/${currentUserId}`).set({
+                    timestamp: Date.now()
+                });
+                alert('Friend request sent!');
+                displayUsers(allUsers);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error sending request');
+            }
+        }
+
+        async function checkFriendRequests() {
+            const snapshot = await database.ref(`users/${currentUserId}/friendRequests`).once('value');
+            const requests = snapshot.val();
+            const count = requests ? Object.keys(requests).length : 0;
+            
+            const badge = document.getElementById('requestBadge');
+            if (count > 0) {
+                badge.textContent = count;
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        async function loadFriendRequests() {
+            const snapshot = await database.ref(`users/${currentUserId}/friendRequests`).once('value');
+            const requests = snapshot.val();
+            
+            if (!requests) {
+                document.getElementById('requestsList').style.display = 'none';
+                document.getElementById('requestsEmpty').style.display = 'block';
+                return;
+            }
+
+            const requestIds = Object.keys(requests);
+            const requestProfiles = await Promise.all(
+                requestIds.map(async uid => {
+                    const profileSnap = await database.ref(`users/${uid}/profile`).once('value');
+                    return { id: uid, ...profileSnap.val() };
+                })
+            );
+
+            const html = requestProfiles.map(user => {
+                const initials = user.fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+                return `
+                    <div class="request-card">
+                        <div class="request-info">
+                            <div class="user-avatar">${user.photoURL || initials}</div>
+                            <div>
+                                <div class="user-name">${user.fullName}</div>
+                                <div class="user-stats">${user.email}</div>
+                            </div>
+                        </div>
+                        <div class="request-actions">
+                            <button class="btn btn-success" onclick="acceptRequest('${user.id}')">Accept</button>
+                            <button class="btn btn-outline" onclick="declineRequest('${user.id}')">Decline</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('requestsList').innerHTML = html;
+            document.getElementById('requestsList').style.display = 'block';
+            document.getElementById('requestsEmpty').style.display = 'none';
+        }
+
+        async function acceptRequest(userId) {
+            try {
+                // Add to both friends lists
+                await database.ref(`users/${currentUserId}/friends/${userId}`).set(true);
+                await database.ref(`users/${userId}/friends/${currentUserId}`).set(true);
+                
+                // Remove request
+                await database.ref(`users/${currentUserId}/friendRequests/${userId}`).remove();
+                
+                alert('Friend request accepted!');
+                await checkFriendRequests();
+                loadFriendRequests();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error accepting request');
+            }
+        }
+
+        async function declineRequest(userId) {
+            try {
+                await database.ref(`users/${currentUserId}/friendRequests/${userId}`).remove();
+                alert('Request declined');
+                await checkFriendRequests();
+                loadFriendRequests();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function loadMyFriends() {
+            const snapshot = await database.ref(`users/${currentUserId}/friends`).once('value');
+            const friends = snapshot.val();
+            
+            if (!friends) {
+                document.getElementById('friendsGrid').style.display = 'none';
+                document.getElementById('friendsEmpty').style.display = 'block';
+                return;
+            }
+
+            const friendIds = Object.keys(friends);
+            const friendProfiles = await Promise.all(
+                friendIds.map(async uid => {
+                    const profileSnap = await database.ref(`users/${uid}/profile`).once('value');
+                    return { id: uid, ...profileSnap.val() };
+                })
+            );
+
+            displayFriendsList(friendProfiles);
+        }
+
+        function displayFriendsList(friends) {
+            const grid = document.getElementById('friendsGrid');
+            
+            grid.style.display = 'grid';
+            document.getElementById('friendsEmpty').style.display = 'none';
+
+            const html = friends.map(user => {
+                const initials = user.fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+                return `
+                    <div class="user-card">
+                        <div class="user-avatar">${user.photoURL || initials}</div>
+                        <div class="user-info">
+                            <div class="user-name">${user.fullName}</div>
+                            <div class="user-stats">Level ${user.level || 1} • ${user.points || 0} points</div>
+                        </div>
+                        <div class="user-actions">
+                            <button class="btn btn-primary" onclick="viewProfile('${user.id}')">View Profile</button>
+                            <button class="btn btn-success" onclick="sendMessage('${user.id}')">Message</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            grid.innerHTML = html;
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update tab styles
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            // Show/hide sections
+            document.getElementById('discoverTab').style.display = tab === 'discover' ? 'block' : 'none';
+            document.getElementById('requestsTab').style.display = tab === 'requests' ? 'block' : 'none';
+            document.getElementById('friendsTab').style.display = tab === 'myfriends' ? 'block' : 'none';
+            document.getElementById('searchBox').style.display = tab === 'discover' ? 'flex' : 'none';
+
+            // Load content
+            if (tab === 'requests') loadFriendRequests();
+            if (tab === 'myfriends') loadMyFriends();
+        }
+
+        function viewProfile(userId) {
+            window.location.href = `user-profile.html?userId=${userId}`;
+        }
+
+        function sendMessage(userId) {
+            window.location.href = `messages.html?userId=${userId}`;
+        }
+
+        async function removeFriend(userId) {
+            if (!confirm('Remove this friend?')) return;
+            
+            try {
+                await database.ref(`users/${currentUserId}/friends/${userId}`).remove();
+                await database.ref(`users/${userId}/friends/${currentUserId}`).remove();
+                alert('Friend removed');
+                displayUsers(allUsers);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>

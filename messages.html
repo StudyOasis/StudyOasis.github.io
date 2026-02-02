@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Student Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: var(--bg-card);
+            padding: 20px 30px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2em;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--primary);
+        }
+
+        .chat-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            overflow: hidden;
+        }
+
+        .conversations-panel {
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .conversations-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .conversation-item {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .conversation-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .conversation-item.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .conv-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+
+        .conv-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .conv-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .conv-last-message {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conversation-item.active .conv-last-message {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .chat-panel {
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-user-info {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            max-width: 70%;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            flex: 1;
+        }
+
+        .message-bubble {
+            background: var(--bg-dark);
+            padding: 12px 18px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+
+        .message.sent .message-bubble {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .message-time {
+            font-size: 0.75em;
+            color: var(--text-secondary);
+            margin-top: 5px;
+            padding: 0 5px;
+        }
+
+        .message-input-area {
+            padding: 20px 30px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid var(--border);
+            border-radius: 25px;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-size: 1em;
+            resize: none;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .send-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 968px) {
+            .chat-container {
+                grid-template-columns: 1fr;
+            }
+
+            .conversations-panel {
+                display: none;
+            }
+
+            .conversations-panel.mobile-show {
+                display: flex;
+            }
+
+            .chat-panel.mobile-hide {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💬 Messages</h1>
+            <div style="display: flex; gap: 10px;">
+                <a href="find-friends.html" class="btn btn-outline">🔍 Find Friends</a>
+                <a href="student-dashboard.html" class="btn btn-outline">← Dashboard</a>
+            </div>
+        </header>
+
+        <div class="chat-container">
+            <!-- Conversations List -->
+            <div class="conversations-panel" id="conversationsPanel">
+                <div class="panel-header">
+                    <h3>Conversations</h3>
+                </div>
+                <div class="conversations-list" id="conversationsList"></div>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="chat-panel" id="chatPanel">
+                <div id="emptyState" class="empty-state">
+                    <div class="empty-icon">💬</div>
+                    <h2>No conversation selected</h2>
+                    <p>Choose a conversation from the list or start a new one</p>
+                </div>
+
+                <div id="chatArea" style="display: none; flex: 1; display: flex; flex-direction: column;">
+                    <div class="chat-header">
+                        <div class="chat-user-info">
+                            <div class="conv-avatar" id="chatAvatar">👤</div>
+                            <div>
+                                <div style="font-weight: 600; font-size: 1.2em;" id="chatName">User Name</div>
+                                <div style="font-size: 0.9em; color: var(--text-secondary);" id="chatStatus">Online</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline" onclick="viewUserProfile()">View Profile</button>
+                    </div>
+
+                    <div class="messages-area" id="messagesArea"></div>
+
+                    <div class="message-input-area">
+                        <textarea class="message-input" id="messageInput" placeholder="Type a message..." rows="1" onkeypress="handleKeyPress(event)"></textarea>
+                        <button class="send-btn" onclick="sendMessage()">📤</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="firebase-config-rtdb.js"></script>
+
+    <script>
+        let currentUserId = null;
+        let currentChatUserId = null;
+        let currentConversationId = null;
+        let messagesListener = null;
+        let conversations = {};
+
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login-rtdb.html';
+                return;
+            }
+            currentUserId = user.uid;
+            
+            // Check if opening chat with specific user
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetUserId = urlParams.get('userId');
+            
+            await loadConversations();
+            
+            if (targetUserId) {
+                openChat(targetUserId);
+            }
+        });
+
+        async function loadConversations() {
+            // Get user's friends
+            const friendsSnapshot = await database.ref(`users/${currentUserId}/friends`).once('value');
+            const friends = friendsSnapshot.val() || {};
+            const friendIds = Object.keys(friends);
+
+            if (friendIds.length === 0) {
+                document.getElementById('conversationsList').innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: var(--text-secondary);">
+                        <p>No conversations yet</p>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Add friends to start chatting!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Load friend profiles
+            const friendProfiles = await Promise.all(
+                friendIds.map(async (friendId) => {
+                    const snapshot = await database.ref(`users/${friendId}/profile`).once('value');
+                    const conversationId = getConversationId(currentUserId, friendId);
+                    
+                    // Get last message
+                    const lastMsgSnapshot = await database.ref(`conversations/${conversationId}/messages`).limitToLast(1).once('value');
+                    const lastMsg = lastMsgSnapshot.val();
+                    const lastMsgText = lastMsg ? Object.values(lastMsg)[0].text : 'No messages yet';
+                    
+                    return {
+                        id: friendId,
+                        conversationId: conversationId,
+                        lastMessage: lastMsgText,
+                        ...snapshot.val()
+                    };
+                })
+            );
+
+            displayConversations(friendProfiles);
+        }
+
+        function displayConversations(friends) {
+            const html = friends.map(friend => {
+                const initials = friend.fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+                return `
+                    <div class="conversation-item" onclick="openChat('${friend.id}')">
+                        <div class="conv-avatar">${friend.photoURL || initials}</div>
+                        <div class="conv-info">
+                            <div class="conv-name">${friend.fullName}</div>
+                            <div class="conv-last-message">${friend.lastMessage}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('conversationsList').innerHTML = html;
+        }
+
+        function getConversationId(userId1, userId2) {
+            return [userId1, userId2].sort().join('_');
+        }
+
+        async function openChat(userId) {
+            currentChatUserId = userId;
+            currentConversationId = getConversationId(currentUserId, userId);
+
+            // Update UI
+            document.querySelectorAll('.conversation-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event?.currentTarget?.classList.add('active');
+
+            // Load user profile
+            const profileSnapshot = await database.ref(`users/${userId}/profile`).once('value');
+            const profile = profileSnapshot.val();
+
+            const initials = profile.fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('chatAvatar').textContent = profile.photoURL || initials;
+            document.getElementById('chatName').textContent = profile.fullName;
+            document.getElementById('chatStatus').textContent = 'Online';
+
+            // Show chat area
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('chatArea').style.display = 'flex';
+
+            // Load messages
+            loadMessages();
+        }
+
+        function loadMessages() {
+            // Remove previous listener
+            if (messagesListener) {
+                database.ref(`conversations/${currentConversationId}/messages`).off('value', messagesListener);
+            }
+
+            // Listen for new messages
+            messagesListener = database.ref(`conversations/${currentConversationId}/messages`)
+                .on('value', (snapshot) => {
+                    const messages = snapshot.val() || {};
+                    displayMessages(messages);
+                });
+        }
+
+        async function displayMessages(messages) {
+            const messagesArray = Object.entries(messages).map(([id, msg]) => ({
+                id,
+                ...msg
+            })).sort((a, b) => a.timestamp - b.timestamp);
+
+            // Get current user profile
+            const myProfileSnapshot = await database.ref(`users/${currentUserId}/profile`).once('value');
+            const myProfile = myProfileSnapshot.val();
+            const myInitials = myProfile.fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+
+            // Get other user profile
+            const otherProfileSnapshot = await database.ref(`users/${currentChatUserId}/profile`).once('value');
+            const otherProfile = otherProfileSnapshot.val();
+            const otherInitials = otherProfile.fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+
+            const html = messagesArray.map(msg => {
+                const isSent = msg.senderId === currentUserId;
+                const avatar = isSent 
+                    ? (myProfile.photoURL || myInitials)
+                    : (otherProfile.photoURL || otherInitials);
+                
+                const time = new Date(msg.timestamp).toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                });
+
+                return `
+                    <div class="message ${isSent ? 'sent' : 'received'}">
+                        <div class="message-avatar">${avatar}</div>
+                        <div class="message-content">
+                            <div class="message-bubble">${msg.text}</div>
+                            <div class="message-time">${time}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const messagesArea = document.getElementById('messagesArea');
+            messagesArea.innerHTML = html;
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+
+            if (!text || !currentConversationId) return;
+
+            try {
+                await database.ref(`conversations/${currentConversationId}/messages`).push({
+                    senderId: currentUserId,
+                    text: text,
+                    timestamp: Date.now()
+                });
+
+                input.value = '';
+                input.style.height = 'auto';
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('Error sending message');
+            }
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function viewUserProfile() {
+            if (currentChatUserId) {
+                window.location.href = `user-profile.html?userId=${currentChatUserId}`;
+            }
+        }
+
+        // Auto-resize textarea
+        document.getElementById('messageInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+        });
+    </script>
+</body>
+</html>

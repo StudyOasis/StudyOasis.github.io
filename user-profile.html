@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Student Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: var(--bg-card);
+            padding: 20px 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--primary);
+        }
+
+        .profile-header {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+            display: flex;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .profile-avatar-section {
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            margin-bottom: 15px;
+            border: 4px solid var(--border);
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .profile-email {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .profile-bio {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: var(--bg-dark);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .friend-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .badges-section {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .badge {
+            background: var(--bg-dark);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .badge:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .badge-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .badge-name {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        .friends-section {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .friends-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .friend-card {
+            background: var(--bg-dark);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .friend-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+        }
+
+        .friend-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            margin: 0 auto 15px;
+        }
+
+        .friend-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .friend-status {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+
+        h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>👤 Profile</h1>
+            <div style="display: flex; gap: 10px;">
+                <a href="find-friends.html" class="btn btn-primary">🔍 Find Friends</a>
+                <a href="messages.html" class="btn btn-primary">💬 Messages</a>
+                <a href="student-dashboard.html" class="btn btn-outline">← Dashboard</a>
+            </div>
+        </header>
+
+        <div id="loadingState" class="loading">
+            <div class="spinner"></div>
+            <p>Loading profile...</p>
+        </div>
+
+        <div id="profileContent" style="display: none;">
+            <div class="profile-header">
+                <div class="profile-avatar-section">
+                    <div class="profile-avatar" id="profileAvatar">👤</div>
+                    <div id="editAvatarBtn" style="display: none;">
+                        <button class="btn btn-primary" onclick="editAvatar()">Change Avatar</button>
+                    </div>
+                </div>
+
+                <div class="profile-info">
+                    <h1 class="profile-name" id="profileName">Loading...</h1>
+                    <p class="profile-email" id="profileEmail">email@example.com</p>
+                    
+                    <div class="profile-bio" id="profileBio">
+                        No bio yet
+                    </div>
+
+                    <div class="profile-stats">
+                        <div class="stat-box">
+                            <div class="stat-number" id="statPoints">0</div>
+                            <div class="stat-label">Points</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number" id="statLevel">1</div>
+                            <div class="stat-label">Level</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number" id="statFriends">0</div>
+                            <div class="stat-label">Friends</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number" id="statBadges">0</div>
+                            <div class="stat-label">Badges</div>
+                        </div>
+                    </div>
+
+                    <div id="friendActions" class="friend-actions"></div>
+                </div>
+            </div>
+
+            <div class="badges-section">
+                <h2>🏆 Badges & Achievements</h2>
+                <div class="badges-grid" id="badgesGrid"></div>
+            </div>
+
+            <div class="friends-section">
+                <h2>👥 Friends (<span id="friendCount">0</span>)</h2>
+                <div class="friends-grid" id="friendsGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="firebase-config-rtdb.js"></script>
+
+    <script>
+        let currentUserId = null;
+        let viewingUserId = null;
+        let userProfile = null;
+        let friendsList = [];
+
+        // Get user ID from URL or use current user
+        const urlParams = new URLSearchParams(window.location.search);
+        viewingUserId = urlParams.get('userId');
+
+        // Check auth
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login-rtdb.html';
+                return;
+            }
+            currentUserId = user.uid;
+            
+            // If no userId in URL, show current user's profile
+            if (!viewingUserId) {
+                viewingUserId = currentUserId;
+            }
+            
+            await loadProfile();
+        });
+
+        async function loadProfile() {
+            try {
+                // Load user profile
+                const profileSnapshot = await database.ref(`users/${viewingUserId}/profile`).once('value');
+                userProfile = profileSnapshot.val();
+
+                if (!userProfile) {
+                    alert('User not found!');
+                    window.location.href = 'student-dashboard.html';
+                    return;
+                }
+
+                // Display profile
+                displayProfile();
+
+                // Load friends
+                await loadFriends();
+
+                // Show content
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('profileContent').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                alert('Error loading profile');
+            }
+        }
+
+        function displayProfile() {
+            const isOwnProfile = viewingUserId === currentUserId;
+
+            // Avatar
+            const avatar = userProfile.photoURL || getInitials(userProfile.fullName);
+            document.getElementById('profileAvatar').textContent = avatar;
+
+            // Show edit button if own profile
+            if (isOwnProfile) {
+                document.getElementById('editAvatarBtn').style.display = 'block';
+            }
+
+            // Basic info
+            document.getElementById('profileName').textContent = userProfile.fullName;
+            document.getElementById('profileEmail').textContent = userProfile.email;
+            document.getElementById('profileBio').textContent = userProfile.bio || 'No bio yet';
+
+            // Stats
+            document.getElementById('statPoints').textContent = userProfile.points || 0;
+            document.getElementById('statLevel').textContent = userProfile.level || 1;
+            document.getElementById('statBadges').textContent = (userProfile.badges || ['newbie']).length;
+
+            // Badges
+            displayBadges(userProfile.badges || ['newbie']);
+
+            // Friend actions
+            if (!isOwnProfile) {
+                displayFriendActions();
+            } else {
+                document.getElementById('friendActions').innerHTML = `
+                    <a href="profile.html" class="btn btn-primary">Edit Profile</a>
+                `;
+            }
+        }
+
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        }
+
+        function displayBadges(badges) {
+            const badgeInfo = {
+                'newbie': { icon: '🌱', name: 'Newbie' },
+                'studious': { icon: '📚', name: 'Studious' },
+                'social': { icon: '👥', name: 'Social Butterfly' },
+                'achiever': { icon: '⭐', name: 'High Achiever' },
+                'helpful': { icon: '🤝', name: 'Helpful' },
+                'consistent': { icon: '🔥', name: 'Consistent' }
+            };
+
+            const html = badges.map(badge => {
+                const info = badgeInfo[badge] || { icon: '🏅', name: badge };
+                return `
+                    <div class="badge">
+                        <div class="badge-icon">${info.icon}</div>
+                        <div class="badge-name">${info.name}</div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('badgesGrid').innerHTML = html;
+        }
+
+        async function displayFriendActions() {
+            const actionsDiv = document.getElementById('friendActions');
+            
+            // Check friendship status
+            const friendshipSnapshot = await database.ref(`users/${currentUserId}/friends/${viewingUserId}`).once('value');
+            const isFriend = friendshipSnapshot.exists();
+
+            // Check pending request
+            const requestSnapshot = await database.ref(`users/${viewingUserId}/friendRequests/${currentUserId}`).once('value');
+            const hasPendingRequest = requestSnapshot.exists();
+
+            if (isFriend) {
+                actionsDiv.innerHTML = `
+                    <button class="btn btn-primary" onclick="sendMessage()">💬 Message</button>
+                    <button class="btn btn-outline" onclick="removeFriend()">Remove Friend</button>
+                `;
+            } else if (hasPendingRequest) {
+                actionsDiv.innerHTML = `
+                    <button class="btn btn-outline" disabled>Friend Request Sent</button>
+                `;
+            } else {
+                actionsDiv.innerHTML = `
+                    <button class="btn btn-primary" onclick="sendFriendRequest()">➕ Add Friend</button>
+                `;
+            }
+        }
+
+        async function loadFriends() {
+            const friendsSnapshot = await database.ref(`users/${viewingUserId}/friends`).once('value');
+            const friendsData = friendsSnapshot.val() || {};
+            const friendIds = Object.keys(friendsData);
+
+            document.getElementById('statFriends').textContent = friendIds.length;
+            document.getElementById('friendCount').textContent = friendIds.length;
+
+            if (friendIds.length === 0) {
+                document.getElementById('friendsGrid').innerHTML = '<p style="text-align: center; color: var(--text-secondary); grid-column: 1/-1;">No friends yet</p>';
+                return;
+            }
+
+            // Load friend profiles
+            const friendProfiles = await Promise.all(
+                friendIds.map(async (friendId) => {
+                    const snapshot = await database.ref(`users/${friendId}/profile`).once('value');
+                    return { id: friendId, ...snapshot.val() };
+                })
+            );
+
+            const html = friendProfiles.map(friend => `
+                <div class="friend-card" onclick="viewProfile('${friend.id}')">
+                    <div class="friend-avatar">${friend.photoURL || getInitials(friend.fullName)}</div>
+                    <div class="friend-name">${friend.fullName}</div>
+                    <div class="friend-status">Level ${friend.level || 1}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('friendsGrid').innerHTML = html;
+        }
+
+        async function sendFriendRequest() {
+            try {
+                // Add to recipient's friend requests
+                await database.ref(`users/${viewingUserId}/friendRequests/${currentUserId}`).set({
+                    timestamp: Date.now()
+                });
+
+                alert('Friend request sent!');
+                displayFriendActions();
+            } catch (error) {
+                console.error('Error sending friend request:', error);
+                alert('Error sending friend request');
+            }
+        }
+
+        async function removeFriend() {
+            if (!confirm('Remove this friend?')) return;
+
+            try {
+                // Remove from both users' friend lists
+                await database.ref(`users/${currentUserId}/friends/${viewingUserId}`).remove();
+                await database.ref(`users/${viewingUserId}/friends/${currentUserId}`).remove();
+
+                alert('Friend removed');
+                displayFriendActions();
+                loadFriends();
+            } catch (error) {
+                console.error('Error removing friend:', error);
+            }
+        }
+
+        function sendMessage() {
+            window.location.href = `messages.html?userId=${viewingUserId}`;
+        }
+
+        function viewProfile(userId) {
+            window.location.href = `user-profile.html?userId=${userId}`;
+        }
+
+        function editAvatar() {
+            const emoji = prompt('Enter an emoji for your avatar:', '👤');
+            if (emoji) {
+                database.ref(`users/${currentUserId}/profile/photoURL`).set(emoji);
+                document.getElementById('profileAvatar').textContent = emoji;
+            }
+        }
+    </script>
+</body>
+</html>

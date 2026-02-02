@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Feed - Student Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: var(--bg-card);
+            padding: 25px 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .create-post {
+            background: var(--bg-card);
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+        }
+
+        .post-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-size: 1em;
+            min-height: 100px;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        .post-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .post-types {
+            display: flex;
+            gap: 10px;
+        }
+
+        .post-type-btn {
+            padding: 8px 16px;
+            background: var(--bg-dark);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .post-type-btn:hover {
+            border-color: var(--primary);
+        }
+
+        .post-type-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .feed {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .post-card {
+            background: var(--bg-card);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .post-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .post-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+
+        .post-user-info {
+            flex: 1;
+        }
+
+        .post-user-name {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 3px;
+        }
+
+        .post-time {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+
+        .post-type-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 6px;
+            font-size: 0.85em;
+            color: var(--primary);
+            margin-left: 10px;
+        }
+
+        .post-type-badge.achievement {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .post-type-badge.question {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .post-content {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 1.05em;
+        }
+
+        .post-stats {
+            display: flex;
+            gap: 20px;
+            padding: 15px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 15px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .stat:hover {
+            color: var(--primary);
+        }
+
+        .stat.liked {
+            color: var(--secondary);
+        }
+
+        .comments-section {
+            margin-top: 15px;
+        }
+
+        .comment {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: var(--bg-dark);
+            border-radius: 12px;
+        }
+
+        .comment-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1em;
+            flex-shrink: 0;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            font-size: 0.95em;
+            margin-bottom: 5px;
+        }
+
+        .comment-text {
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .comment-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .comment-input input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+        }
+
+        .comment-input input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>📱 Study Feed</h1>
+                <p style="color: var(--text-secondary); margin-top: 5px;">Share your journey</p>
+            </div>
+            <a href="student-dashboard.html" class="btn btn-outline">← Dashboard</a>
+        </header>
+
+        <!-- Create Post -->
+        <div class="create-post">
+            <textarea class="post-input" id="postInput" placeholder="Share your progress, ask questions, or celebrate achievements..."></textarea>
+            <div class="post-actions">
+                <div class="post-types">
+                    <button class="post-type-btn active" onclick="selectPostType('update')">📝 Update</button>
+                    <button class="post-type-btn" onclick="selectPostType('achievement')">🏆 Achievement</button>
+                    <button class="post-type-btn" onclick="selectPostType('question')">❓ Question</button>
+                </div>
+                <button class="btn btn-primary" onclick="createPost()">Post</button>
+            </div>
+        </div>
+
+        <!-- Feed -->
+        <div class="feed" id="feed"></div>
+
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <div class="empty-icon">📱</div>
+            <h2>No posts yet</h2>
+            <p>Be the first to share something!</p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="firebase-config-rtdb.js"></script>
+
+    <script>
+        let currentUserId = null;
+        let currentUserProfile = null;
+        let selectedPostType = 'update';
+
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login-rtdb.html';
+                return;
+            }
+            currentUserId = user.uid;
+            
+            // Load user profile
+            const profileSnapshot = await database.ref(`users/${currentUserId}/profile`).once('value');
+            currentUserProfile = profileSnapshot.val();
+            
+            loadFeed();
+        });
+
+        function selectPostType(type) {
+            selectedPostType = type;
+            document.querySelectorAll('.post-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+
+        async function createPost() {
+            const text = document.getElementById('postInput').value.trim();
+            if (!text) {
+                alert('Please write something!');
+                return;
+            }
+
+            try {
+                const post = {
+                    userId: currentUserId,
+                    userName: currentUserProfile.fullName,
+                    userAvatar: currentUserProfile.photoURL || null,
+                    text: text,
+                    type: selectedPostType,
+                    timestamp: Date.now(),
+                    likes: {},
+                    comments: {}
+                };
+
+                await database.ref('feed/posts').push(post);
+                
+                // Clear input
+                document.getElementById('postInput').value = '';
+                
+                // Award points for posting
+                await database.ref(`users/${currentUserId}/profile/points`).transaction((current) => {
+                    return (current || 0) + 10;
+                });
+
+            } catch (error) {
+                console.error('Error creating post:', error);
+                alert('Error creating post');
+            }
+        }
+
+        function loadFeed() {
+            database.ref('feed/posts').orderByChild('timestamp').limitToLast(50).on('value', (snapshot) => {
+                const posts = snapshot.val();
+                
+                if (!posts) {
+                    document.getElementById('feed').style.display = 'none';
+                    document.getElementById('emptyState').style.display = 'block';
+                    return;
+                }
+
+                document.getElementById('feed').style.display = 'flex';
+                document.getElementById('emptyState').style.display = 'none';
+
+                const postsArray = Object.entries(posts).map(([id, post]) => ({
+                    id,
+                    ...post
+                })).sort((a, b) => b.timestamp - a.timestamp);
+
+                displayPosts(postsArray);
+            });
+        }
+
+        function displayPosts(posts) {
+            const feedDiv = document.getElementById('feed');
+            
+            const html = posts.map(post => {
+                const initials = post.userName.split(' ').map(n => n[0]).join('').toUpperCase();
+                const likesCount = post.likes ? Object.keys(post.likes).length : 0;
+                const commentsCount = post.comments ? Object.keys(post.comments).length : 0;
+                const isLiked = post.likes && post.likes[currentUserId];
+                
+                const timeAgo = getTimeAgo(post.timestamp);
+                
+                const typeEmoji = {
+                    'update': '📝',
+                    'achievement': '🏆',
+                    'question': '❓'
+                };
+
+                const comments = post.comments ? Object.entries(post.comments).map(([id, comment]) => {
+                    const commentInitials = comment.userName.split(' ').map(n => n[0]).join('').toUpperCase();
+                    return `
+                        <div class="comment">
+                            <div class="comment-avatar">${comment.userAvatar || commentInitials}</div>
+                            <div class="comment-content">
+                                <div class="comment-author">${comment.userName}</div>
+                                <div class="comment-text">${comment.text}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('') : '';
+
+                return `
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="post-avatar">${post.userAvatar || initials}</div>
+                            <div class="post-user-info">
+                                <div class="post-user-name">
+                                    ${post.userName}
+                                    <span class="post-type-badge ${post.type}">${typeEmoji[post.type]} ${post.type}</span>
+                                </div>
+                                <div class="post-time">${timeAgo}</div>
+                            </div>
+                        </div>
+
+                        <div class="post-content">${post.text}</div>
+
+                        <div class="post-stats">
+                            <div class="stat ${isLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}')">
+                                <span>${isLiked ? '❤️' : '🤍'}</span>
+                                <span>${likesCount} ${likesCount === 1 ? 'like' : 'likes'}</span>
+                            </div>
+                            <div class="stat">
+                                <span>💬</span>
+                                <span>${commentsCount} ${commentsCount === 1 ? 'comment' : 'comments'}</span>
+                            </div>
+                        </div>
+
+                        <div class="comments-section">
+                            ${comments}
+                            <div class="comment-input">
+                                <input type="text" placeholder="Write a comment..." id="comment-${post.id}" onkeypress="handleCommentKeyPress(event, '${post.id}')">
+                                <button class="btn btn-primary" onclick="addComment('${post.id}')">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            feedDiv.innerHTML = html;
+        }
+
+        async function toggleLike(postId) {
+            const likeRef = database.ref(`feed/posts/${postId}/likes/${currentUserId}`);
+            const snapshot = await likeRef.once('value');
+            
+            if (snapshot.exists()) {
+                await likeRef.remove();
+            } else {
+                await likeRef.set(true);
+            }
+        }
+
+        async function addComment(postId) {
+            const input = document.getElementById(`comment-${postId}`);
+            const text = input.value.trim();
+            
+            if (!text) return;
+
+            try {
+                await database.ref(`feed/posts/${postId}/comments`).push({
+                    userId: currentUserId,
+                    userName: currentUserProfile.fullName,
+                    userAvatar: currentUserProfile.photoURL || null,
+                    text: text,
+                    timestamp: Date.now()
+                });
+
+                input.value = '';
+            } catch (error) {
+                console.error('Error adding comment:', error);
+            }
+        }
+
+        function handleCommentKeyPress(event, postId) {
+            if (event.key === 'Enter') {
+                addComment(postId);
+            }
+        }
+
+        function getTimeAgo(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            const seconds = Math.floor(diff / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+
+            if (days > 0) return `${days}d ago`;
+            if (hours > 0) return `${hours}h ago`;
+            if (minutes > 0) return `${minutes}m ago`;
+            return 'Just now';
+        }
+    </script>
+</body>
+</html>

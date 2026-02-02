@@ -745,12 +745,20 @@
 
     <div class="container">
         <header>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
                 <div>
                     <h1>📚 Student Productivity Hub</h1>
                     <p class="header-subtitle" id="welcomeMessage">Stay organized, achieve your goals, and ace your studies!</p>
                 </div>
-                <button class="btn btn-danger" onclick="logout()" style="padding: 10px 20px;">Logout</button>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <a href="flashcards.html" class="btn btn-primary" style="padding: 10px 20px; text-decoration: none;">🎴 Flashcards</a>
+                    <a href="assignments.html" class="btn btn-primary" style="padding: 10px 20px; text-decoration: none;">📋 Assignments</a>
+                    <a href="exams.html" class="btn btn-primary" style="padding: 10px 20px; text-decoration: none;">⏰ Exams</a>
+                    <a href="habits.html" class="btn btn-primary" style="padding: 10px 20px; text-decoration: none;">✅ Habits</a>
+                    <a href="statistics.html" class="btn btn-primary" style="padding: 10px 20px; text-decoration: none;">📊 Stats</a>
+                    <a href="profile.html" class="btn btn-outline" style="padding: 10px 20px; text-decoration: none;">⚙️ Settings</a>
+                    <button class="btn btn-danger" onclick="logout()" style="padding: 10px 20px;">Logout</button>
+                </div>
             </div>
         </header>
 

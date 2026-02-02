@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignments - Student Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-hover: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: var(--bg-card);
+            padding: 25px 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+
+        .filters {
+            background: var(--bg-card);
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            border: 1px solid var(--border);
+        }
+
+        .filter-btn {
+            padding: 8px 20px;
+            border: 2px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .filter-btn:hover {
+            background: var(--bg-hover);
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .assignments-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .assignment-card {
+            background: var(--bg-card);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .assignment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .assignment-card.completed {
+            opacity: 0.6;
+        }
+
+        .assignment-checkbox {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: var(--success);
+            margin-top: 5px;
+        }
+
+        .assignment-content {
+            flex: 1;
+        }
+
+        .assignment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+            gap: 15px;
+        }
+
+        .assignment-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .assignment-card.completed .assignment-title {
+            text-decoration: line-through;
+        }
+
+        .assignment-subject {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 6px;
+            font-size: 0.85em;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .assignment-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        .assignment-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .assignment-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        .priority-badge {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .priority-high {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .priority-medium {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .priority-low {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .due-date {
+            font-weight: 600;
+        }
+
+        .due-soon {
+            color: var(--danger);
+        }
+
+        .due-week {
+            color: var(--warning);
+        }
+
+        .due-later {
+            color: var(--success);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            border: 1px solid var(--border);
+            margin: 20px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-title {
+            font-size: 2em;
+            color: var(--text-primary);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 2em;
+            cursor: pointer;
+        }
+
+        .close-modal:hover {
+            color: var(--danger);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 18px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-size: 1em;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        select.input-field {
+            cursor: pointer;
+        }
+
+        textarea.input-field {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .assignment-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>📋 Assignments</h1>
+                <p style="color: var(--text-secondary); margin-top: 5px;">Track and manage all your assignments</p>
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <button class="btn btn-primary" onclick="openAddModal()">+ New Assignment</button>
+                <a href="student-dashboard.html" class="btn btn-outline">← Dashboard</a>
+            </div>
+        </header>
+
+        <div class="stats-row">
+            <div class="stat-box">
+                <div class="stat-number" id="totalCount">0</div>
+                <div class="stat-label">Total Assignments</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="completedCount">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="pendingCount">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="overdueCount">0</div>
+                <div class="stat-label">Overdue</div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active" onclick="filterAssignments('all')">All</button>
+            <button class="filter-btn" onclick="filterAssignments('pending')">Pending</button>
+            <button class="filter-btn" onclick="filterAssignments('completed')">Completed</button>
+            <button class="filter-btn" onclick="filterAssignments('high')">High Priority</button>
+            <button class="filter-btn" onclick="filterAssignments('overdue')">Overdue</button>
+        </div>
+
+        <div id="assignmentsContainer" class="assignments-grid"></div>
+
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <div class="empty-state-icon">📚</div>
+            <h2>No Assignments Yet</h2>
+            <p style="margin: 20px 0;">Add your first assignment to get started!</p>
+            <button class="btn btn-primary" onclick="openAddModal()">Add Assignment</button>
+        </div>
+    </div>
+
+    <div class="modal" id="assignmentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Assignment</h3>
+                <button class="close-modal" onclick="closeModal()">×</button>
+            </div>
+            <form id="assignmentForm">
+                <div class="form-group">
+                    <label>Assignment Title</label>
+                    <input type="text" id="title" class="input-field" placeholder="e.g., Math Homework Chapter 5" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Subject</label>
+                        <input type="text" id="subject" class="input-field" placeholder="e.g., Mathematics" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="priority" class="input-field" required>
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="date" id="dueDate" class="input-field" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Due Time</label>
+                        <input type="time" id="dueTime" class="input-field">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Description (Optional)</label>
+                    <textarea id="description" class="input-field" placeholder="Add notes or details..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Add Assignment</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) window.location.href = 'homepage.html';
+
+        let assignments = JSON.parse(localStorage.getItem('assignments')) || [];
+        let currentFilter = 'all';
+
+        renderAssignments();
+        updateStats();
+
+        function renderAssignments() {
+            const container = document.getElementById('assignmentsContainer');
+            const emptyState = document.getElementById('emptyState');
+            
+            let filtered = filterByType(assignments, currentFilter);
+            
+            if (filtered.length === 0) {
+                container.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            container.style.display = 'grid';
+            emptyState.style.display = 'none';
+            
+            // Sort by due date
+            filtered.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+            
+            container.innerHTML = filtered.map(assignment => {
+                const dueDate = new Date(assignment.dueDate);
+                const today = new Date();
+                const daysUntil = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+                
+                let dueDateClass = 'due-later';
+                let dueDateText = dueDate.toLocaleDateString();
+                
+                if (daysUntil < 0) {
+                    dueDateClass = 'due-soon';
+                    dueDateText = 'Overdue';
+                } else if (daysUntil === 0) {
+                    dueDateClass = 'due-soon';
+                    dueDateText = 'Due Today!';
+                } else if (daysUntil === 1) {
+                    dueDateClass = 'due-soon';
+                    dueDateText = 'Due Tomorrow';
+                } else if (daysUntil <= 7) {
+                    dueDateClass = 'due-week';
+                    dueDateText = `Due in ${daysUntil} days`;
+                }
+                
+                return `
+                    <div class="assignment-card ${assignment.completed ? 'completed' : ''}">
+                        <input type="checkbox" class="assignment-checkbox" 
+                               ${assignment.completed ? 'checked' : ''} 
+                               onchange="toggleComplete(${assignment.id})">
+                        
+                        <div class="assignment-content">
+                            <div class="assignment-header">
+                                <div>
+                                    <h3 class="assignment-title">${assignment.title}</h3>
+                                    <span class="assignment-subject">${assignment.subject}</span>
+                                </div>
+                                <button class="btn btn-danger" onclick="deleteAssignment(${assignment.id})">×</button>
+                            </div>
+                            
+                            <div class="assignment-meta">
+                                <div class="meta-item">
+                                    <span>📅</span>
+                                    <span class="due-date ${dueDateClass}">${dueDateText}</span>
+                                </div>
+                                ${assignment.dueTime ? `
+                                    <div class="meta-item">
+                                        <span>⏰</span>
+                                        <span>${assignment.dueTime}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            ${assignment.description ? `
+                                <div class="assignment-description">${assignment.description}</div>
+                            ` : ''}
+                            
+                            <div class="assignment-footer">
+                                <span class="priority-badge priority-${assignment.priority}">
+                                    ${assignment.priority.toUpperCase()} PRIORITY
+                                </span>
+                                <span style="color: var(--text-secondary); font-size: 0.85em;">
+                                    Added ${new Date(assignment.createdAt).toLocaleDateString()}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterByType(items, type) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            switch(type) {
+                case 'pending':
+                    return items.filter(a => !a.completed);
+                case 'completed':
+                    return items.filter(a => a.completed);
+                case 'high':
+                    return items.filter(a => a.priority === 'high' && !a.completed);
+                case 'overdue':
+                    return items.filter(a => {
+                        const due = new Date(a.dueDate);
+                        due.setHours(0, 0, 0, 0);
+                        return due < today && !a.completed;
+                    });
+                default:
+                    return items;
+            }
+        }
+
+        function filterAssignments(type) {
+            currentFilter = type;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            renderAssignments();
+        }
+
+        function openAddModal() {
+            document.getElementById('assignmentModal').classList.add('active');
+            document.getElementById('assignmentForm').reset();
+            
+            // Set default date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('dueDate').value = tomorrow.toISOString().split('T')[0];
+        }
+
+        function closeModal() {
+            document.getElementById('assignmentModal').classList.remove('active');
+        }
+
+        document.getElementById('assignmentForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const assignment = {
+                id: Date.now(),
+                title: document.getElementById('title').value.trim(),
+                subject: document.getElementById('subject').value.trim(),
+                priority: document.getElementById('priority').value,
+                dueDate: document.getElementById('dueDate').value,
+                dueTime: document.getElementById('dueTime').value,
+                description: document.getElementById('description').value.trim(),
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+            
+            assignments.push(assignment);
+            saveAssignments();
+            renderAssignments();
+            updateStats();
+            closeModal();
+        });
+
+        function toggleComplete(id) {
+            const assignment = assignments.find(a => a.id === id);
+            assignment.completed = !assignment.completed;
+            saveAssignments();
+            renderAssignments();
+            updateStats();
+        }
+
+        function deleteAssignment(id) {
+            if (!confirm('Delete this assignment?')) return;
+            assignments = assignments.filter(a => a.id !== id);
+            saveAssignments();
+            renderAssignments();
+            updateStats();
+        }
+
+        function updateStats() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const completed = assignments.filter(a => a.completed).length;
+            const pending = assignments.filter(a => !a.completed).length;
+            const overdue = assignments.filter(a => {
+                const due = new Date(a.dueDate);
+                due.setHours(0, 0, 0, 0);
+                return due < today && !a.completed;
+            }).length;
+            
+            document.getElementById('totalCount').textContent = assignments.length;
+            document.getElementById('completedCount').textContent = completed;
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('overdueCount').textContent = overdue;
+        }
+
+        function saveAssignments() {
+            localStorage.setItem('assignments', JSON.stringify(assignments));
+        }
+    </script>
+</body>
+</html>
